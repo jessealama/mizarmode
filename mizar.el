@@ -1796,7 +1796,8 @@ Useful when you did too much browsing and want to get back to your
 editing buffers."
 (interactive)
 (let* ((l (mizar-current-abstracts)) (i (length l)))
-  (mapcar '(lambda (x) (kill-buffer x)) l)
+  (dolist (x l)
+    (kill-buffer x))
   (message "%d abstracts closed" i)))
 
 (defun mizar-close-some-abstracts ()
@@ -1810,7 +1811,8 @@ Useful when you did too much browsing and want to get back to your
 editing buffers."
 (interactive)
 (let* ((l (mizar-current-abstracts)) (i (length l)))
-  (mapcar '(lambda (x) (bury-buffer x)) l)
+  (dolist (x l)
+    (bury-buffer x))
   (message "%d abstracts buried" i)))
 
 
