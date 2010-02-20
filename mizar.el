@@ -1622,7 +1622,7 @@ INDENT is the current indentation level."
     ;; Reset the timer with a new timeout when clicking a file
     ;; in case the user was navigating directories, we can cancel
     ;; that other timer.
-    (speedbar-set-timer speedbar-update-speed)
+    (speedbar-set-timer dframe-update-speed)
     (switch-to-buffer-other-window (current-buffer))
     (goto-char token)
     (run-hooks 'speedbar-visiting-tag-hook)
