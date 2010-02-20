@@ -2277,7 +2277,7 @@ Used to keep tables up-to-date.")
 
 (defun make-one-tvect (numvect)
   "Split the string NUMVECT and create a vector of numbers corresponding to the split pieces."
-  (vconcat (mapcar 'string-to-int (split-string numvect))))
+  (vconcat (mapcar 'string-to-number (split-string numvect))))
 
 (defun get-sgl-table (aname)
   "Two vectors created from the .sgl file for ANAME."
@@ -6651,7 +6651,7 @@ that (A . B) occurs before (C . D) and B is a superstring o C."
 (defun mizar-references-preceding-th-number ()
   (let ((preceding-label (mizar-references-preceding-th-label)))
     (if preceding-label
-	(string-to-int (substring preceding-label 2))
+	(string-to-number (substring preceding-label 2))
       0)))
 
 (defun mizar-edit-reference (old-ref new-ref starting-pos)
@@ -6677,7 +6677,7 @@ definition, lemma, local label"
     (goto-char (point-min))
     (re-search-forward "\\(Lm\\|Th\\|[A-Z]\\|Def\\)\\([0-9]+\\)")
     (let ((number-as-string (match-string-no-properties 2)))
-      (string-to-int number-as-string))))
+      (string-to-number number-as-string))))
 
 (defun mizar-references-bump-future-theorem-labels ()
   (let ((point (point))
@@ -7039,7 +7039,7 @@ step that we are currently in."
       (let ((labels-as-strings (mapcar #'(lambda (label-str)
 					  (substring label-str 2))
 				       only-labels)))
-	(let ((labels-as-numbers (mapcar 'string-to-int labels-as-strings)))
+	(let ((labels-as-numbers (mapcar 'string-to-number labels-as-strings)))
 	  (apply 'max labels-as-numbers))))))
 
 (defun mizar-uniquify-theorem-labels ()
