@@ -6707,8 +6707,7 @@ will be increased by one and references will be correspondingly adjusted."
 	      (when (find (1+ preceding-th-number) future-labels :key 'cdr)
 		(mizar-references-bump-future-theorem-labels))
 	      (search-forward "Lm\\([0-9]+\\):")
-	      (replace-string (concat "theorem" " " new-label ":"))
-	      (mizar-references-replace-reference current-label new-label))))))))
+	      (replace-match (concat "theorem" " " new-label ":")))))))))
 
 (defun mizar-new-theorem-label (number)
   (concat "Th" (int-to-string number)))
