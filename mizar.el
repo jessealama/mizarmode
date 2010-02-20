@@ -1459,6 +1459,44 @@ The results are shown and clickable in the Compilation buffer."
       (cd old)
       )))
 
+(defvar mizar-full-items-grep-command-nolines
+ (concat 
+  " '$/=\";\"; " 
+  "while ($f=shift) {open(IN,$f);while (<IN>) "
+  "{ s/\\n/;;;/g; if(/placeholder/) {s/;;;/\\n/g; s/^\\n+//; print \"\\n\\n$_\"}} "
+  "close(IN)}' ")
+ "A Perl program for grepping whole items that end with ';'
+in Mizar abstracts.  File names and line numbers are not printed.")
+
+(defvar mizar-gab-items-grep-command-nolines
+ (concat 
+  " '$/=\"::\"; " 
+  "while ($f=shift) {open(IN,$f);while (<IN>) "
+  "{ s/\\n/;;;/g; if(/placeholder/) {s/;;;/\\n/g; s/\\n*(::)?$//; print \"\\n\\n::$_\"}} "
+  "close(IN)}' ")
+ "A Perl program for grepping whole items that end with '::'
+in MMLQuery abstracts. File names and line numbers are not printed.")
+
+(defvar mizar-full-items-grep-command-lines
+ (concat 
+  " '$/=\";\"; " 
+  "while ($f=shift) {$ln=1;open(IN,$f);while (<IN>) "
+  "{$j=tr/\\n//; if(/placeholder/) "
+  "{$bef= $`; $add= $bef =~ tr/\\n//; s/^\\n+//; $ln1=$add+$ln; "
+  "print \"\\n\\n$f:$ln1:\\n$_\"}; $ln+=$j}; close(IN)}' ")
+ "A Perl program for grepping whole items that end with ';'
+in Mizar abstracts. File names and line numbers are printed.")
+
+(defvar mizar-gab-items-grep-command-lines
+ (concat 
+  " '$/=\"::\"; " 
+  "while ($f=shift) {$ln=1;open(IN,$f);$f=~ s/gab.raw/gab/; "
+  "while (<IN>) {$j=tr/\\n//; if(/placeholder/) "
+  "{$bef= $`; $add= $bef =~ tr/\\n//; s/\\n*(::)?$//; $ln1=$add+$ln; "
+  "print \"\\n\\n$f:$ln1:\\n::$_\"}; $ln+=$j}; close(IN)}' ")
+ "A Perl program for grepping whole items that end with '::'
+in MMLQuery abstracts. File names and line numbers are printed.")
+
 
 (defun mizar-grep-abs-full-items (exp gab)
 "Grep MML abstracts for regexp EXP, using ';' as record separator,
@@ -1514,44 +1552,6 @@ the file positions."
   "Search for expression EXP in full-item GAB's."
 (interactive "sregexp: ")
 (mizar-grep-abs-full-items exp t))
-
-(defvar mizar-full-items-grep-command-nolines
- (concat 
-  " '$/=\";\"; " 
-  "while ($f=shift) {open(IN,$f);while (<IN>) "
-  "{ s/\\n/;;;/g; if(/placeholder/) {s/;;;/\\n/g; s/^\\n+//; print \"\\n\\n$_\"}} "
-  "close(IN)}' ")
- "A Perl program for grepping whole items that end with ';'
-in Mizar abstracts.  File names and line numbers are not printed.")
-
-(defvar mizar-gab-items-grep-command-nolines
- (concat 
-  " '$/=\"::\"; " 
-  "while ($f=shift) {open(IN,$f);while (<IN>) "
-  "{ s/\\n/;;;/g; if(/placeholder/) {s/;;;/\\n/g; s/\\n*(::)?$//; print \"\\n\\n::$_\"}} "
-  "close(IN)}' ")
- "A Perl program for grepping whole items that end with '::'
-in MMLQuery abstracts. File names and line numbers are not printed.")
-
-(defvar mizar-full-items-grep-command-lines
- (concat 
-  " '$/=\";\"; " 
-  "while ($f=shift) {$ln=1;open(IN,$f);while (<IN>) "
-  "{$j=tr/\\n//; if(/placeholder/) "
-  "{$bef= $`; $add= $bef =~ tr/\\n//; s/^\\n+//; $ln1=$add+$ln; "
-  "print \"\\n\\n$f:$ln1:\\n$_\"}; $ln+=$j}; close(IN)}' ")
- "A Perl program for grepping whole items that end with ';'
-in Mizar abstracts. File names and line numbers are printed.")
-
-(defvar mizar-gab-items-grep-command-lines
- (concat 
-  " '$/=\"::\"; " 
-  "while ($f=shift) {$ln=1;open(IN,$f);$f=~ s/gab.raw/gab/; "
-  "while (<IN>) {$j=tr/\\n//; if(/placeholder/) "
-  "{$bef= $`; $add= $bef =~ tr/\\n//; s/\\n*(::)?$//; $ln1=$add+$ln; "
-  "print \"\\n\\n$f:$ln1:\\n::$_\"}; $ln+=$j}; close(IN)}' ")
- "A Perl program for grepping whole items that end with '::'
-in MMLQuery abstracts. File names and line numbers are printed.")
 
 (defun mizar-raw-to-gab (start end)
   "Convert a `gab.raw' references to `.gab' in the region delimited by START and END."
