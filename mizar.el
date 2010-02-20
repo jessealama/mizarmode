@@ -6283,7 +6283,7 @@ English word."
   (let ((code (mizar-voc-current-item-code))
 	(name (mizar-voc-current-item-name)))
     (mizar-voc-delete-item)
-    (mizar-voc-new-item-command-with-promt (mizar-voc-code->type code) name)))
+    (mizar-voc-new-item-command-with-prompt (mizar-voc-code->type code) name)))
 
 ;;; Gathering references
 
