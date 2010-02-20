@@ -430,8 +430,7 @@ MoMM should be installed for this."
 (interactive)
 (setq mizar-indent-width to))
 
-(if mizar-mode-syntax-table
-    ()
+(unless mizar-mode-syntax-table
   (let ((table (make-syntax-table)))
     (modify-syntax-entry ?\" "_" table)
     (modify-syntax-entry ?: ". 12" table)
@@ -724,8 +723,8 @@ Used for exact completion.")
 
 (defun mizar-indent-buffer ()
   "Indent the entire mizar buffer."
-  (interactive )
-  ( indent-region (point-min) (point-max) nil))
+  (interactive)
+  (indent-region (point-min) (point-max)))
 
 (defun mizar-newline ()
   "Terminate the current line with a newline and indent the next."
@@ -1380,9 +1379,10 @@ This is used e.g. for grepping if `mizar-grep-in-mml-order' is non-nil."
 
 (defvar mizar-mml-order-var-name "MML_GREPPING_LIST"
 "Name of the environment variable passed to grep tools.
-This variable changes according to what extension we are grepping.
-We do this not to mess the process buffer with a long list,
-and because shell-expansion is difficult across various shells an OSs.")
+This variable changes according to what extension we are
+grepping.  We do this to not mess the process buffer with a long
+list, and because the behavior of shell expansion is difficult
+to control across various shells and operating systems.")
 
 (defvar mizar-mml-order-list nil
 "Holds list of mml files in mml order, read from `mizar-mml-lar'.
@@ -4883,8 +4883,9 @@ Nil iff nothing is processed right now, serves also as a state variable.")
 )
 
 (defun mizar-buf-verifiable-p (&optional buffer)
-"Simple check if verifier can be run on BUFFER."
-(string-match "[.]miz$" (buffer-file-name buffer)))
+  "Simple check if verifier can be run on BUFFER."
+  (and (buffer-file-name buffer)
+       (string-match "[.]miz$" (buffer-file-name buffer))))
 
 (defun mizar-it-noqr (&optional options util forceacc)
 "Run mizar in terminal on the text in the current .miz buffer.
