@@ -736,7 +736,7 @@ Used for exact completion.")
   ;; Indent both the (now) previous and current line first.
   (when mizar-newline-indents
     (save-excursion
-      (previous-line 1)
+      (forward-line -1)
       (mizar-indent-line))
     (mizar-indent-line)))
 
@@ -6406,7 +6406,7 @@ along the way.  Set `mizar-last-lemma-label' to the max of the
 labels we encountered."
   (let ((labels))
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (re-search-forward "Lm\\(.+\\):" nil t)
 	(push (string-to-number (match-string-no-properties 1)) labels)))
     (setq mizar-last-lemma-label (apply 'max labels))
@@ -6434,7 +6434,7 @@ labels we encountered."
 	(len (length label)))
     (message "regex = %S" regex)
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (while (re-search-forward regex nil t)
 	(push (- (match-end 0) len) positions)))
     positions))
@@ -6444,7 +6444,7 @@ labels we encountered."
   (let ((pos)
 	(regex (concat "theorem[ \n\t]+" label ":")))
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (when (re-search-forward regex)
 	(setq pos (match-beginning 0))))
     pos))
@@ -6454,7 +6454,7 @@ labels we encountered."
   (let ((pos)
 	(regex (concat "^" label ":")))
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (when (re-search-forward regex)
 	(setq pos (match-beginning 0))))
     pos))  
@@ -6464,7 +6464,7 @@ labels we encountered."
   (let ((pos)
 	(regex (concat ":" label ":")))
     (save-excursion
-      (beginning-of-buffer)
+      (goto-char (point-min))
       (when (re-search-forward regex)
 	(setq pos (match-beginning 0))))
     pos))  
@@ -6672,7 +6672,7 @@ that (A . B) occurs before (C . D) and B is a superstring o C."
 definition, lemma, local label"
   (with-temp-buffer
     (insert label)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (re-search-forward "\\(Lm\\|Th\\|[A-Z]\\|Def\\)\\([0-9]+\\)")
     (let ((number-as-string (match-string-no-properties 2)))
       (string-to-int number-as-string))))
@@ -6962,7 +6962,7 @@ number is greater than NUM."
   "Check whether PURPORTED-LABEL really is a local label."
   (with-temp-buffer
     (insert purported-label)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (re-search-forward "^[A-Z][0-9]+" nil t)))
 
 (defun mizar-matches-reference (purported-reference)
@@ -6970,7 +6970,7 @@ number is greater than NUM."
   theorem, lemma, or definition)."
   (with-temp-buffer
     (insert purported-reference)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (or (looking-at "Th[0-9]+")
 	(looking-at "Lm[0-9]+")
 	(looking-at "Def[0-9]+"))))
@@ -7049,7 +7049,7 @@ of all the theorems in the buffer.  This function is used in
 	(greatest (mizar-greatest-theorem-number-used))
 	(offset 1))
     (save-excursion
-      (end-of-buffer)
+      (goto-char (point-max))
       (while (re-search-backward "^[ \t]*theorem[ \t\n]+\\(Th[0-9]+\\):" nil t)
 	(unless (mizar-author-within-comment)
 	  (let ((old-label (match-string-no-properties 1))
@@ -7067,7 +7067,7 @@ labeled \"Th<n-1>\", etc."
   (let ((num-theorems (mizar-num-theorems)))
     (save-excursion
       (mizar-uniquify-theorem-labels)
-      (end-of-buffer)
+      (goto-char (point-max))
       (while (> num-theorems 0)
 	(re-search-backward "^[ \t]*theorem[ \t\n]+\\(Th[0-9]+\\):" nil t)
 	(unless (mizar-author-within-comment)
