@@ -67,7 +67,7 @@ Valid values are 'gnuemacs,'Xemacs and 'winemacs.")
 (if (eq mizar-emacs 'xemacs)
     (require 'speedbar) ;; no NOERROR in xemacs
   (require 'speedbar nil t)) ;;noerror if not present
-
+(require 'xml)
 
 ;;;; variables and customization
 
