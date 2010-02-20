@@ -1593,6 +1593,23 @@ The results are shown and clickable in the Compilation buffer."
     )))
 
 ;;;;;;;;;;;;;;; imenu and speedbar handling ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar mizar-imenu-expr
+'(
+  ("Reservations" "[ \n\r]\\(reserve\\b.*\\)" 1)
+  ("Structures" "[ \n\r]\\(struct\\b.*\\)" 1)
+  ("Modes" "[ \n\r]\\(mode\\b.*\\)" 1)
+  ("Attributes" "[ \n\r]\\(attr\\b.*\\)" 1)
+  ("Predicates" "[ \n\r]\\(pred\\b.*\\)" 1)
+  ("Functors" "[ \n\r]\\(func\\b.*\\)" 1)
+  ("Notations" "[ \n\r]\\(\\(synonym\\|antonym\\)\\b.*\\)" 1)
+  ("Registrations" "[ \n\r]\\(\\(cluster\\|identify\\)\\b.*\\)" 1)
+  ("Schemes" "^[ ]*scheme[ \n\r]+\\([a-zA-Z0-9_']+\\)" 1)
+  ("Named Defs" "[ \n\r]\\(:[a-zA-Z0-9_']+:\\)[ \n\r]" 1)
+  ("Named Theorems" "^[ ]*theorem[ \n\r]+\\([a-zA-Z0-9_']+:\\)[ \n\r]" 1)
+)
+"Mizar imenu expression.")
+
 (defvar mizar-sb-trim-hack
 (cond ((fboundp 'trim-words) (list 'trim-words))
       ((fboundp  'speedbar-trim-words-tag-hierarchy)
@@ -4566,22 +4583,6 @@ Show them in the buffer *Constructors List*."
 (defconst mizar-error-regexp "\\(\\*\\|::>,\\)\\([0-9]+\\)" "Regexp used to locate error messages in a mizar text.")
 
 (defvar mizar-region-count 0  "Number of regions on mizar-region-stack.")
-
-(defvar mizar-imenu-expr
-'(
-  ("Reservations" "[ \n\r]\\(reserve\\b.*\\)" 1)
-  ("Structures" "[ \n\r]\\(struct\\b.*\\)" 1)
-  ("Modes" "[ \n\r]\\(mode\\b.*\\)" 1)
-  ("Attributes" "[ \n\r]\\(attr\\b.*\\)" 1)
-  ("Predicates" "[ \n\r]\\(pred\\b.*\\)" 1)
-  ("Functors" "[ \n\r]\\(func\\b.*\\)" 1)
-  ("Notations" "[ \n\r]\\(\\(synonym\\|antonym\\)\\b.*\\)" 1)
-  ("Registrations" "[ \n\r]\\(\\(cluster\\|identify\\)\\b.*\\)" 1)
-  ("Schemes" "^[ ]*scheme[ \n\r]+\\([a-zA-Z0-9_']+\\)" 1)
-  ("Named Defs" "[ \n\r]\\(:[a-zA-Z0-9_']+:\\)[ \n\r]" 1)
-  ("Named Theorems" "^[ ]*theorem[ \n\r]+\\([a-zA-Z0-9_']+:\\)[ \n\r]" 1)
-)
-"Mizar imenu expression.")
 
 
 (defun toggle-quick-run ()
