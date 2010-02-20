@@ -4234,7 +4234,7 @@ files exist first."
 	       (file-name-nondirectory (buffer-file-name))))
        (args (cadr (mizar-momm-get-default-files aname nil
 						 mizar-momm-load-tptp)))
-       tt tb)
+       tt tb tts)
   (setq args (mapconcat 'identity args " "))
   (setq tts (split-string
 	    (read-string  "Typetable(s): " mizar-mommall-tt)
@@ -5368,20 +5368,23 @@ This is a flamewar-resolving hack."
 (defun mizar-make-theorems-string ()
   "Make string of all theorems."
   (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (setq result "")
-    (while
- 	(and
-	 (re-search-forward "^ *\\(theorem[^s]\\)" (point-max) t)
-	 (setq pos (match-beginning 1))
-	 (re-search-forward " *\\([;]\\|by\\|proof\\)" (point-max) t))
-      (progn
-	(setq result1 (buffer-substring-no-properties pos (match-beginning 0)))
-	 (if  (string-match "\n$" result1)
-	     (setq result (concat result result1 "\n" ))
-	   (setq result (concat result result1 "\n\n" )))))
-    result))
+  (let ((result "")
+	(pos nil)
+	(result1 nil))
+    (save-excursion
+      (goto-char (point-min))
+      (while
+	  (and
+	   (re-search-forward "^ *\\(theorem[^s]\\)" (point-max) t)
+	   (setq pos (match-beginning 1))
+	   (re-search-forward " *\\([;]\\|by\\|proof\\)" (point-max) t))
+	(progn
+	  (setq result1 (buffer-substring-no-properties pos 
+							(match-beginning 0)))
+	  (if (string-match "\n$" result1)
+	      (setq result (concat result result1 "\n" ))
+	    (setq result (concat result result1 "\n\n" )))))
+    result)))
 
 ;; Abbrevs
 (setq dabbrev-abbrev-skip-leading-regexp "\\(\\sw+\\.\\)+" )
@@ -6028,7 +6031,7 @@ move backward across N balanced expressions."
   (if (< arg 0)
       (backward-sexp 1)
     (if (looking-at hs-block-start-regexp)
-	(let (beg1 end1 result1 prec)
+	(let (beg1 end1 result1 prec count)
 	  (forward-sexp 1)
 	  (setq count 1)
 	  (while (and (> count 0) (not (eobp)))
@@ -6404,14 +6407,12 @@ the buffer."
 
 (defun mizar-scan-lemma-labels ()
   "Scan the lemmas in the current buffer, gathering their labels
-along the way.  Set `mizar-last-lemma-label' to the max of the
-labels we encountered."
-  (let ((labels))
+along the way."
+  (let (labels mizar-last-lemma-label)
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward "Lm\\(.+\\):" nil t)
 	(push (string-to-number (match-string-no-properties 1)) labels)))
-    (setq mizar-last-lemma-label (apply 'max labels))
     labels))
 
 (defun mizar-check-theorem-label-consistency ()
