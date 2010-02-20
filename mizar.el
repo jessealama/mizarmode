@@ -37,6 +37,7 @@
 ;;
 ;; better indentation,
 
+;;; Code:
 (defvar mizar-emacs
   (if (featurep 'xemacs)
       'xemacs
@@ -144,7 +145,7 @@ Valid values are 'gnuemacs,'Xemacs and 'winemacs.")
 :group 'mizar)
 
 (defcustom mizar-launch-speedbar nil
-"Launch speedbar upon entering mizar-mode for the first time.
+"Launch speedbar upon entering `mizar-mode' for the first time.
 Speedbar can be (de)activated later by running the command `speedbar'."
 :type 'boolean
 :group 'mizar-speedbar)
@@ -441,7 +442,7 @@ MoMM should be installed for this."
 (define-abbrev-table 'mizar-mode-abbrev-table ())
 
 (defun mizar-mode-variables ()
-  "The variables used by mizar-mode."
+  "The variables used by `mizar-mode'."
   (set-syntax-table mizar-mode-syntax-table)
   (setq local-abbrev-table mizar-mode-abbrev-table)
   (make-local-variable 'paragraph-start)
@@ -802,7 +803,7 @@ Used for exact completion.")
 "Symbols for Mizar logical connectives.")
 	
 (defun parse-fla-with (fla connectives)
-  "The connectives CONNECTIVES come from the lowest priority here, i.e. 'iff comes first."
+  "The connectives CONNECTIVES in the formula FLA come from the lowest priority here, i.e. 'iff comes first."
   (if connectives
       (let* (tmp (conn1 (car connectives)) (restconn (cdr connectives))
 		 (fla (parse-fla-with fla restconn))
@@ -870,7 +871,7 @@ denote qualified segments."
   (cons 'PAR (parse-formula (mapcar 'mizar-parse-protect-brackets fla)))))
     
 (defun mizar-parse-fla (fla)
-  "The top-level function for parsing lisppars output."
+  "Parse formula FLA.  Top-level function for parsing lisppars output."
   (parse-formula (mapcar 'mizar-parse-protect-brackets fla)))
 
 (defun current-line ()
@@ -3657,7 +3658,7 @@ which was killed."
     (switch-to-buffer (car history-pos))
   (if (cadr history-pos)
       (find-file (cadr history-pos))
-    (error "Cannot go back because the temporary buffer was deleted.")))
+    (error "Cannot go back because the temporary buffer was deleted")))
 (goto-char (third history-pos)))
 
 
