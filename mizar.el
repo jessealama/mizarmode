@@ -6755,22 +6755,6 @@ will be increased by one and references will be correspondingly adjusted."
 	  (find-file-other-window voc-file-name)
 	  (mizar-voc-new-item (mizar-voc-type->code type) name))))))
 
-;;; Navigation
-
-(defun mizar-next-theorem ()
-  "Go to the next theorem in the current article."
-  (interactive)
-  (when (looking-at "[^;]*theorem[^s]")
-    (forward-char 1))
-  (if (re-search-forward "[^;]*theorem[^s]" nil t)
-      (backward-char 8)
-    (backward-char 1)))
-
-(defun mizar-previous-theorem ()
-  "Go to the previous theorem in the current article."
-  (interactive)
-  (re-search-backward "[^;]*theorem[^s]" nil t))
-
 (defvar mizar-proof-introducing-keywords
   '("theorem" "existence" "uniqueness" "coherence" "compatibility"
     "symmetry" "correctness"))
