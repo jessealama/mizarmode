@@ -1223,6 +1223,16 @@ then, for pretty printing, by using `mizar-skeleton-string'."
 	
 ;;;;;;;;;;;;;;;;;  parsing references ;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;  the tags handling starts here ;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; xemacs still seems to be unhappy
+
+(put 'mizar-mode 'find-tag-default-function 'mizar-ref-at-point)
+
+(defvar mizsymbtags (concat mizfiles "abstr/symbtags")
+  "Symbol tags file.  It is in in the `abstr' directory of $MIZFILES.")
+(defvar mizreftags (concat mizfiles "abstr/reftags")
+  "References tags file.  It is in the `abstr' directory of $MIZFILES.")
+
 (defun mizar-ref-at-point ()
   "Return the reference at the point."
   (save-excursion
@@ -1630,15 +1640,7 @@ INDENT is the current indentation level."
     (speedbar-maybee-jump-to-attached-frame)
     ))
 
-;;;;;;;;;;;;  the tags handling starts here ;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; xemacs still seems to be unhappy
 
-(put 'mizar-mode 'find-tag-default-function 'mizar-ref-at-point)
-
-(defvar mizsymbtags (concat mizfiles "abstr/symbtags")
-  "Symbol tags file.  It is in in the `abstr' directory of $MIZFILES.")
-(defvar mizreftags (concat mizfiles "abstr/reftags")
-  "References tags file.  It is in the `abstr' directory of $MIZFILES.")
 
 ;; nasty to redefine these two, but working; I could not get the local vars machinery right
 (defun etags-goto-tag-location (tag-info)
