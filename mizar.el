@@ -4597,28 +4597,86 @@ See the documentation for the variable `mizar-goto-error'."
 (interactive)
 (setq mizar-goto-error where))
 
+(defvar mizar-summary-original-buffer nil
+  "The buffer that the current summary is summarizing.")
 
 (defun mizar-make-theorem-summary ()
-  "Make a smmary of the theorems in the the current buffer.The
-output will be put into a buffer called \"*Theorem-Summary*\"; if
-that buffer already exists when this command is called, its
-contents will be erased.
+  "Summarize the theorems in the the current article.  The output
+will be put into a buffer called \"*Theorem-Summary*\"; if that
+buffer already exists when this command is called, its contents
+will be erased.  The current window will be split, and the new
+theorem summary buffer will be put into the newly created window.
+Point in the newly created theorem summary buffer will be put at
+the beginning of the theorem in the original article buffer that
+follows point in the original article buffer.  (In the case where
+point in the article buffer is within the statement of a theorem,
+then point in the new theorem summary buffer will be put at the
+beginning of that theorem.)
 
-(The command `hs-hide-all', accessible from the Hide/Show menu,
+\(The command `hs-hide-all', accessible from the Hide/Show menu,
 can be used instead of `mizar-make-theorem-summary' to make a
 summary of an article.)"
   (interactive)
-  (message "Making theorem summary...")
-  (setq result (mizar-make-theorems-string))
-  (with-output-to-temp-buffer "*Theorem-Summary*"
-    (save-excursion
-      (let ((cur-mode "mizar"))
-	(set-buffer standard-output)
-	(mizar-mode)
+  (let ((buf (current-buffer))
+	(starting-pos nil)
+	(starting-pos-set nil)
+	(current-pos (point))
+	(article-name (mizar-current-article-name))
+	(theorems-and-positions (mizar-make-theorem-summary-1)))
+    (message "Making theorem summary...")
+    (let ((summary-buf (get-buffer-create "*Theorem-Summary*")))
+      (with-current-buffer summary-buf
 	(erase-buffer)
-	(insert result))
-      (goto-char (point-min))))
+	(dolist (theorem-and-position theorems-and-positions)
+	  (let ((pos (car theorem-and-position))
+		(thm (cdr theorem-and-position))
+		(start-pos (point)))
+	    (when (and (not starting-pos-set)
+		       (> pos current-pos))
+	      (message "We passed where we started from at theorem %S" thm)
+	      (setq starting-pos start-pos
+		    starting-pos-set t))
+	    (insert thm)
+	    (add-text-properties start-pos (point) `(mizar-original-pos ,pos))
+	    (newline 2)))
+	(mizar-mode)
+	(mizar-strip-errors)
+	(set-buffer-modified-p nil)
+	(set 'buffer-read-only t)
+	(set (make-local-variable 'mizar-summary-original-buffer) buf))
+      (switch-to-buffer-other-window summary-buf)
+      (if starting-pos
+	  (goto-char starting-pos)
+	(goto-char (point-max)))))
   (message "Making theorem summary...done"))
+
+(defun mizar-theorem-summary-next-theorem ()
+  "Go to the next theorem within a theorem summary buffer."
+  (let ((attempt nil))
+    (save-excursion
+      (when (looking-at "^[ \t]*theorem")
+	(forward-char 1))
+      (setq attempt (re-search-forward "^[ \t]*theorem" nil t)))
+    (when attempt
+      (goto-char attempt)
+      (backward-word)))) ;; go to the beginning of "theorem"
+
+(defun mizar-theorem-summary-previous-theorem ()
+  "Go to the previous theorem within a theorem summary buffer."
+  (let ((attempt nil))
+    (save-excursion
+      (setq attempt (re-search-backward "^[ \t]*theorem" nil t)))
+    (when attempt
+      (goto-char attempt))))
+
+(defun mizar-theorem-summary-visit-theorem ()
+  "Visit the theorem in the article buffer corresponding to the
+current theorem summary buffer."
+  (let ((origin (get-text-property (point) 'mizar-original-pos)))
+    (when origin
+      (let ((article-buffer mizar-summary-original-buffer))
+	(switch-to-buffer-other-window article-buffer)
+	(goto-char origin)))))
 
 (defun mizar-occur-refs ()
   "Generate an *Occur* buffer containing all references."
