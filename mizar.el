@@ -8,7 +8,7 @@
 ;;
 ;; Emacs mode for authoring Mizar (www.mizar.org) articles.
 ;; Run C-h f mizar-mode for overview of commands.
-;; Complete info, html, pdf and ps documentation is
+;; Complete info, HTML, PDF and PS documentation is
 ;; downloadable from http://kti.ms.mff.cuni.cz/~urban/MizarModeDoc.tar.gz .
 ;; Browse it at http://ktilinux.ms.mff.cuni.cz/~urban/MizarModeDoc/html .
 
@@ -469,8 +469,7 @@ MoMM should be installed for this."
 
 
 (defun mizar-mode-commands (map)
-  "Set up some initial key bindings (in the keymap MAP) for
-common mizar editing functions."
+  "Initialize bindings (in keymap MAP) for common editing functions."
   (define-key map "\t" 'mizar-indent-line)
   (define-key map ";" 'mizar-semicolon)
   (define-key map "\r" 'mizar-newline))
@@ -548,6 +547,7 @@ Used for exact completion.")
 
 ;; destructive!
 (defun unique (l1)
+  "Destructively remove duplicate elements from L1."
   (let ((l1 l1))
   (while l1
       (setq l1 (setcdr l1 (delete (car l1) (cdr l1))))))
@@ -802,7 +802,9 @@ Used for exact completion.")
 "Symbols for Mizar logical connectives.")
 	
 (defun parse-fla-with (fla connectives)
-  "The connectives CONNECTIVES in the formula FLA come from the lowest priority here, i.e. 'iff comes first."
+  "Parse formula FLA with respect to the list CONNECTIVES.
+
+The connectives in FLA come from the lowest priority here, i.e. 'iff comes first."
   (if connectives
       (let* (tmp (conn1 (car connectives)) (restconn (cdr connectives))
 		 (fla (parse-fla-with fla restconn))
@@ -863,8 +865,9 @@ The lists arising from having parenthesis must have already been handled here."
     res)))
 
 (defun mizar-parse-protect-brackets (fla)
-"Replace sublists in FLA with parsed sublists beginning with 
-'PAR recursively. Exceptions are sublist starting with 'Q, which
+"Recursively replace sublists in FLA with parsed sublists.
+
+The sublists begin with 'PAR.  Exceptions are sublist starting with 'Q, which
 denote qualified segments."
 (if (or (not (listp fla)) (eq 'Q (car fla))) fla
   (cons 'PAR (parse-formula (mapcar 'mizar-parse-protect-brackets fla)))))
@@ -919,6 +922,7 @@ See `mizar-insert-skeleton' for more."
 (mapconcat 'car (cdr types) ""))
 
 (defun mizar-pp-parsed-fla (fla)
+  "Pretty-print the parsed formula FLA."
   (if (stringp fla) (concat fla " ")
     (let ((beg (car fla)))
       (cond
@@ -1730,7 +1734,8 @@ Goes directly to the reference under the mouse click."
   (mizar-show-ref  t))
 
 (defun visit-tags-or-die (name)
-  (if (file-readable-p name)
+  "Die, generally."
+(if (file-readable-p name)
       (visit-tags-table name)
     (error "No tags file %s" name)
     nil))
@@ -1853,6 +1858,7 @@ Go to column COL, if FORCE, then insert spaces if short."
 
 ;; fixed for xemacs leaving "" in the end
 (defun buff-to-numtable ()
+  "Send the current buffer to a list of numbers."
   (let ((l (delete "" (split-string (buffer-string) "\n"))))
     (mapcar '(lambda (x)
 	       (mapcar 'string-to-number (split-string x)))
@@ -2254,6 +2260,7 @@ TRANSLATE causes `frmrepr' to be called."
 
 ; should be tested for 6.2.!
 (defun parse-show-cluster (&optional translate fname reload)
+  "Parse show cluster."
   (interactive)
   (save-excursion
     (let ((name (or fname
@@ -2620,8 +2627,9 @@ places."
     nil))))
 
 (defun mizar-underline-cexpls (start)
-"Add 'underline to 'cexp.
-Only if `mizar-underlines-expls' is non-nil."
+"Add 'underline to 'cexp, starting at buffer position START.
+
+This works only if `mizar-underlines-expls' is non-nil."
 (if mizar-underline-expls
     (save-buffer-state 
      nil
@@ -2642,7 +2650,8 @@ Only if `mizar-underlines-expls' is non-nil."
 	   (goto-char next-change)))))))
 
 (defun mizar-underline-in-region (beg end)
-  (mizar-underline-cexpls beg))
+  "Underline appropriately in the current buffer delimited by BEG and END."
+(mizar-underline-cexpls beg))
 
 
 (defvar res-regexp "\\([A-Z0-9_]+\\):\\([a-z]+\\)\\([.]\\)\\([0-9]+\\)"
@@ -3115,12 +3124,13 @@ With a numeric prefix ARG, go forward ARG queries."
 (defvar mmlquery-pending-output "")
 
 (defun inferior-mmlquery-mode-variables ()
-  "Set up variables used in inferior-mmlquery-mode."
+  "Set up variables used in `inferior-mmlquery-mode'."
   (set-syntax-table inferior-mmlquery-mode-syntax-table)
   (setq mmlquery-pending-output "")
 )
 
 (defun mmlquery-finished (str)
+  "Does STR indicate that we're done interacting with mmlquery?"
   (string-match mmlquery-prompt-regexp str))
 
 (defun mmlquery-handle-output (str)
@@ -3295,7 +3305,7 @@ These are files with embedded formatting information in the MIME
 standard text/mmlquery format.  Turning the mode on runs
 `mmlquery-mode-hook'.
 
-If the optional argument ARG is non-nil, turn off mmlquery-mode.
+If the optional argument ARG is non-nil, turn off command `mmlquery-mode'.
 
 Commands:
 
