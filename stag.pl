@@ -290,7 +290,7 @@ sub guesswhat {
       $g =substr($_,pos);
   }
 
-  $g =~ m/([^;]*)[ \r\n]for[ \r\n]([^;]*)/
+  $g =~ m/^(.*)[ \r\n]for[ \r\n](.*);/s
     or die "Bad guessing at $fnoext:$.";
 
   ($p1,$p2)= ($1, $2);    # the patterns hopefully
@@ -303,7 +303,7 @@ sub guesswhat {
 	  if(length($syms2[$#syms2]) > $max) { $max = length($syms2[$#syms2])};
       }
   }
-  if ($#syms1 < 0)  {die "Nothing matched while guessing at $fnoext:$.:$_:$g";}
+  if ($#syms1 < 0)  {die "Nothing matched while guessing at $fnoext:$.:$_:$g:$p1:$p2";}
   if ($#syms1 == 0) {return $syms1[0]}; # OK, only one matched
   if ($#syms1 > 0)                    # more than one matched
   {
